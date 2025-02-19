@@ -1,0 +1,29 @@
+﻿
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.sunny-effect {
+    background-color: yellow;
+    background-image: url(/images/sunny.jpg);
+    background-size: cover;
+    color: white;
+}
+
+.rainy-effect {
+    background-color: lightblue;
+    background-image: url(/images/rainy.jpg);
+    background-size: cover;
+    color: white;
+}
+
+
+.weather-container {
+    height: 100%;
+}
+
+.rz-grid-table rz-grid-table-fixed rz-grid-table-striped{
+        background-color: rgba(255, 23, 255, 0.8);
+}

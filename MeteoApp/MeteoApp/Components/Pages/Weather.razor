@@ -1,0 +1,76 @@
+﻿@page "/weather"
+@using MeteoServerProject.OpenMeteo
+@using Radzen.Blazor;
+@using Radzen;
+@using Models;
+@using ViewModels;
+
+@rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@inject WeatherViewModel WeatherVM
+
+<link rel="stylesheet" href="css/weather.css">
+<PageTitle>Weather</PageTitle>
+
+<div id="weather-container" class="weather-container">
+    <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Normal" Style="height:100%">
+
+        <div>
+            <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween">
+                <h1>Weather</h1>
+                <RadzenDropDown Data="@WeatherVM.CityLocations"
+                                TextProperty="CityName"
+                                Style="width:25%"
+                                @bind-Value="@WeatherVM.SelectedCity"
+                                Change="@(async () => await WeatherVM.GetWeatherForCity())" />
+            </RadzenStack>
+        </div>
+        
+
+       
+
+            <RadzenDataGrid AllowColumnResize="true"
+                            AllowRowSelectOnRowClick="true"
+                            SelectionMode="DataGridSelectionMode.Single"
+                            Data="@WeatherVM.WeatherDataList"
+                            TItem="WeatherData"
+                            Style="height: 600px;--rz-grid-header-text-transform: none; --rz-grid-header-font-size: 20px; width:100%; opacity:0.85;"
+                            RowSelect="OnRowClick"
+                            PageSize="24"
+                            AllowPaging="true"
+                            AllowAlternatingRows="true"
+                            @bind-Value="WeatherVM.SelectedWeatherItem">
+                <Columns>
+                    <RadzenDataGridColumn TItem="WeatherData" Property="Time" Title="Hour" />
+                    <RadzenDataGridColumn TItem="WeatherData" Property="Temperature" Title="Temperature (°C)" />
+                    <RadzenDataGridColumn TItem="WeatherData" Property="WindSpeed" Title="Wind Speed (km/h)" />
+                    <RadzenDataGridColumn TItem="WeatherData" Property="Humidity" Title="Humidity (%)" />
+                    <RadzenDataGridColumn TItem="WeatherData" Property="PrecipitationProbability" Title="Precipitation Probability (%)" />
+                    <RadzenDataGridColumn TItem="WeatherData" Property="CloudCover" Title="Cloud Cover (%)" />
+                </Columns>
+            </RadzenDataGrid>
+    </RadzenStack>
+
+</div>
+
+@code {
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+		{
+            await WeatherVM.Initialize();
+            await OnRowClick(WeatherVM.WeatherDataList[0]);
+            StateHasChanged();
+		}
+    }
+
+    private async Task OnRowClick(WeatherData args)
+    {
+        var weatherData = args;
+        string effect = weatherData.CloudCover <= 50 ? "sunny" : "rainy";
+        await JSRuntime.InvokeVoidAsync("applyWeatherEffect", effect);
+    }
+
+
+}

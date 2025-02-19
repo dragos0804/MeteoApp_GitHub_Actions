@@ -17,7 +17,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	Console.WriteLine("test github action");
+	Console.WriteLine("test jenkins");
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
